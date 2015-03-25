@@ -196,7 +196,7 @@ namespace JBDataTransform
                     wsEntry.Cells[entryRowIdx, entryColumns["學期"]].PutValue(ssss.Semester);
                     wsEntry.Cells[entryRowIdx, entryColumns["成績年級"]].PutValue(ssss.Grade);
                     wsEntry.Cells[entryRowIdx, entryColumns["學業"]].PutValue(ssss.Self.學業成績);
-                    
+
                     entryRowIdx++;
 
                     foreach (SubjectScore subjScore in ssss.Subjects)
@@ -221,6 +221,74 @@ namespace JBDataTransform
                 }
 
                 wb.Save("SemesterSubjectEntryScore.xls", SaveFormat.Excel97To2003);
+            }
+
+            MessageBox.Show("完成！");
+        }
+
+        private void btnAttendance_Click(object sender, EventArgs e)
+        {
+            string connstr = GetConnectionString();
+
+            string cmd = Attendance.Command;
+            using (DataSource ds = new DataSource(connstr))
+            {
+                List<Attendance> records = ds.Execute<Attendance>(cmd);
+
+                if (records.Count <= 0)
+                {
+                    Console.WriteLine("沒有資料！\n" + cmd);
+                    return;
+                }
+
+                Workbook wb = new Workbook();
+                wb.Worksheets.Clear();
+                Worksheet ws = wb.Worksheets[wb.Worksheets.Add()];
+
+                //學生系統編號	學號	班級	座號	科別	姓名	學年度	學期	日期	缺曠假別	缺曠節次
+                string[] fields = new string[] { "學號", "學年度", "學期", "日期", "缺曠節次", "缺曠假別" };
+                Dictionary<string, int> columns = Util.FillFields(ws, fields);
+
+                int rowIdx = 1;
+                foreach (Attendance rec in records)
+                {
+                    int startPeriod = rec.StartPeriod;
+
+                    if (startPeriod <= 0)
+                    {
+                        string ps = Attendance.GetChinesePeriodString(rec.StartPeriodString);
+
+                        ws.Cells[rowIdx, columns["學號"]].PutValue(rec.Self.學號);
+                        ws.Cells[rowIdx, columns["學年度"]].PutValue(rec.Self.學年度);
+                        ws.Cells[rowIdx, columns["學期"]].PutValue(rec.Self.學期);
+                        ws.Cells[rowIdx, columns["日期"]].PutValue(rec.Date);
+                        ws.Cells[rowIdx, columns["缺曠節次"]].PutValue(ps);
+                        ws.Cells[rowIdx, columns["缺曠假別"]].PutValue(rec.AbsenceType);
+
+                        rowIdx++;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < rec.PeriodCount; i++)
+                        {
+                            string ps = Attendance.GetChinesePeriodString((startPeriod + i) + "");
+
+                            ws.Cells[rowIdx, columns["學號"]].PutValue(rec.Self.學號);
+                            ws.Cells[rowIdx, columns["學年度"]].PutValue(rec.Self.學年度);
+                            ws.Cells[rowIdx, columns["學期"]].PutValue(rec.Self.學期);
+                            ws.Cells[rowIdx, columns["日期"]].PutValue(rec.Date);
+                            ws.Cells[rowIdx, columns["缺曠節次"]].PutValue(ps);
+                            ws.Cells[rowIdx, columns["缺曠假別"]].PutValue(rec.AbsenceType);
+
+                            rowIdx++;
+                        }
+                    }
+                }
+
+                string fn = "attendance.xls";
+
+                wb.Save(fn, SaveFormat.Excel97To2003);
+                Process.Start(fn);
             }
 
             MessageBox.Show("完成！");

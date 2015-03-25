@@ -39,6 +39,7 @@
             this.txtServer = new System.Windows.Forms.TextBox();
             this.btnStudent = new System.Windows.Forms.Button();
             this.btnSubjectScore = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -143,11 +144,22 @@
             this.btnSubjectScore.UseVisualStyleBackColor = true;
             this.btnSubjectScore.Click += new System.EventHandler(this.btnSubjectScore_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(138, 156);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(104, 23);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "學生缺曠資料";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnAttendance_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(281, 252);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnSubjectScore);
             this.Controls.Add(this.btnStudent);
             this.Controls.Add(this.btnConfirm);
@@ -181,6 +193,7 @@
         private System.Windows.Forms.Button btnConfirm;
         private System.Windows.Forms.Button btnStudent;
         private System.Windows.Forms.Button btnSubjectScore;
+        private System.Windows.Forms.Button button1;
     }
 }
 

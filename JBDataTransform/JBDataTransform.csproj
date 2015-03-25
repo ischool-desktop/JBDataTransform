@@ -58,6 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="ValueObjectBase.cs" />
+    <Compile Include="VObjects\Attendance.cs" />
     <Compile Include="VObjects\Class.cs" />
     <Compile Include="VObjects\RetakeSubjectScore.cs" />
     <Compile Include="VObjects\SemesterSubjectScoreSet.cs" />
