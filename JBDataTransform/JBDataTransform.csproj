@@ -60,6 +60,7 @@
     <Compile Include="ValueObjectBase.cs" />
     <Compile Include="VObjects\Attendance.cs" />
     <Compile Include="VObjects\Class.cs" />
+    <Compile Include="VObjects\Discipline.cs" />
     <Compile Include="VObjects\RetakeSubjectScore.cs" />
     <Compile Include="VObjects\SemesterSubjectScoreSet.cs" />
     <Compile Include="VObjects\Student.cs" />

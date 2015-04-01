@@ -293,5 +293,69 @@ namespace JBDataTransform
 
             MessageBox.Show("完成！");
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string connstr = GetConnectionString();
+
+            string cmd = Discipline.Command;
+            using (DataSource ds = new DataSource(connstr))
+            {
+                List<Discipline> records = ds.Execute<Discipline>(cmd);
+
+                if (records.Count <= 0)
+                {
+                    Console.WriteLine("沒有資料！\n" + cmd);
+                    return;
+                }
+
+                Workbook wb = new Workbook();
+                wb.Worksheets.Clear();
+                Worksheet ws = wb.Worksheets[wb.Worksheets.Add()];
+
+                //學號	學年度	學期	日期	大功	小功	嘉獎	大過	小過	警告	事由	是否銷過	銷過日期	銷過事由	登錄日期
+                string[] fields = new string[] { "學號", "學年度", "學期", "日期", "大功", "小功", "嘉獎", "大過", "小過", "警告", "事由", "是否銷過", "銷過日期", "銷過事由", "留校查看", "登錄日期" };
+                Dictionary<string, int> columns = Util.FillFields(ws, fields);
+
+                int rowIdx = 1;
+                foreach (Discipline rec in records)
+                {
+                    string cleanDate = rec.Self.銷過日期;
+                    bool isClean = (string.IsNullOrWhiteSpace(cleanDate) ? false : true);
+
+                    string type = Discipline.TypeString(rec.Self.類型);
+
+                    if (type == "留校查看")
+                        ws.Cells[rowIdx, columns["留校查看"]].PutValue("是");
+                    else
+                        ws.Cells[rowIdx, columns[type]].PutValue(rec.Self.次數);
+
+                    ws.Cells[rowIdx, columns["學號"]].PutValue(rec.Self.學號);
+                    ws.Cells[rowIdx, columns["學年度"]].PutValue(rec.Self.學年度);
+                    ws.Cells[rowIdx, columns["學期"]].PutValue(rec.Self.學期);
+                    ws.Cells[rowIdx, columns["日期"]].PutValue(Util.SpliteDate(rec.Self.日期, 1911));
+                    ws.Cells[rowIdx, columns["事由"]].PutValue(rec.Self.事由);
+                    ws.Cells[rowIdx, columns["是否銷過"]].PutValue(isClean ? "是" : "");
+
+                    if (isClean)
+                    {
+                        ws.Cells[rowIdx, columns["銷過日期"]].PutValue(Util.SpliteDate(rec.Self.銷過日期, 1911));
+                        ws.Cells[rowIdx, columns["銷過事由"]].PutValue(rec.Self.銷過事由);
+                    }
+
+                    string[] regDates = ((string)rec.Self.登錄日期).Split(new char[] { ' ' });
+                    ws.Cells[rowIdx, columns["登錄日期"]].PutValue(Util.SpliteDate(regDates[0], 1911) + " " + regDates[1]);
+
+                    rowIdx++;
+                }
+
+                string fn = "discipline.xls";
+
+                wb.Save(fn, SaveFormat.Excel97To2003);
+                Process.Start(fn);
+            }
+
+            MessageBox.Show("完成！");
+        }
     }
 }
